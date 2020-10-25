@@ -12,8 +12,6 @@
 
 ## Links for the databank
 
-**Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
-
 Link for the data with the chosen classes:
 https://drive.google.com/file/d/15SSnj3CllTz_73jKHOVU-9HpYgRpxAYm/view?usp=sharing
 
