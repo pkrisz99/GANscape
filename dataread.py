@@ -14,15 +14,15 @@ import csv
 
 
 class DataRead:
-    def __init__(self, folder_path, data_type, batch_size, min_images):
+    def __init__(self, folder_path, data_type, batch_size, batch_num):
         self.folder_path = folder_path
         self.type = data_type
-        if (batch_size*((int(min_images / batch_size))) < min_images):
-            self.length = batch_size*((int(min_images / batch_size))+1)
-        else:
-            self.length = min_images
+        
+       
+        self.length = batch_num*batch_size
+            
         self.batch_size = batch_size
-        self.batch_num = int(self.length / batch_size)
+        self.batch_num = batch_num
         
         self.end_point = self.length
         
@@ -53,7 +53,7 @@ class DataRead:
         tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
         for i in range(self.batch_num):
             for j in range(self.batch_size):
-                img = Image.open(images[i*batch_size + j])
+                img = Image.open(images[i*self.batch_size + j])
                 img_temp=np.array(img)
                 tmp[i,j]  =  img_temp
                     
@@ -70,7 +70,7 @@ class DataRead:
         tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
         for i in range(self.batch_num):
             for j in range(self.batch_size):
-                img = Image.open(images[i*batch_size + j])
+                img = Image.open(images[i*self.batch_size + j])
                 img_temp=np.array(img)
                 tmp[i,j]  =  img_temp
                     
@@ -88,7 +88,7 @@ class DataRead:
         for i in range(self.batch_num):
             tmp_small = []
             for j in range(self.batch_size):
-                img = Image.open(images[i*batch_size + j])
+                img = Image.open(images[i*self.batch_size + j])
                 img_temp=np.array(img)
                 tmp_small.append(img_temp)
             
@@ -124,11 +124,103 @@ class DataRead:
         # self.result_images
         # self.csv
         
+    def reset(self):
+        
+        path = os.path.join(self.folder_path, self.target_path)
+        
+        images = []
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file.endswith('.jpg'): images.append(os.path.join(root, file))
+        
+        if ((len(images)-self.end_point) > self.length ):
+             # ======================target images=====================
+            path = os.path.join(self.folder_path, self.target_path)
+        
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
+                
+            tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j + self.end_point])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                    
+            self.target_images = tmp
+            # ============================train images-cropped=============================
+            path = os.path.join(self.folder_path, self.cropped_path)
+        
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
+                
+            tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j + self.end_point])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                    
+            self.cropped_images = tmp
+            # =============================train images-crop===========================
+            path = os.path.join(self.folder_path, self.crop_path)
+        
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))    
+                
+            tmp_big = []
+            for i in range(self.batch_num):
+                tmp_small = []
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j + self.end_point])
+                    img_temp=np.array(img)
+                    tmp_small.append(img_temp)
             
+                tmp_big.append(tmp_small)
+                    
+            self.crop_images = tmp_big
+            # =====================================result images===========================
+            # preparing the space
+            self.result_images = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            #===================================reading in the csv
+            csv_path = 'out_' + self.type + '.csv'
+            with open(csv_path, "r") as infile:
+                r = csv.reader(infile)
+                for i in range(self.end_point):
+                    next(r)
+                tmp_big = []
+                for i in range(self.batch_num):
+                    tmp_small = []
+                    for j in range(self.batch_size):
+                        row = next(r)
+                        row = row[1:]
+                        row = list(map(int, row)) #itt lehetne még egy np.array alakítás
+                        tmp_small.append(row)
+                
+                    tmp_big.append(tmp_small)
+        
+            self.csv = tmp_big
+            self.end_point = self.end_point + self.length
+        else:
+            print("not enough pictures for a next group of batches, try changing the batch_num is it is possible")
     
     
-    
-    
+    def change_batch_num(self,new_batch_num): # only do this before reset!
+        self.batch_num = new_batch_num
+        self.length = self.batch_num*self.batch_size
+        
+    def change_batch_size(self,new_batch_size): # only do this before reset!
+        self.batch_size = new_batch_size
+        self.length = self.batch_num*self.batch_size
     
     
     
