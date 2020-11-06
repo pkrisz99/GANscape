@@ -50,7 +50,7 @@ class DataRead:
                 if file.endswith('.jpg'): images.append(os.path.join(root, file))
         print(len(images))
                 
-        tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+        tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
         for i in range(self.batch_num):
             for j in range(self.batch_size):
                 img = Image.open(images[i*self.batch_size + j])
@@ -67,7 +67,7 @@ class DataRead:
                 if file.endswith('.jpg'): images.append(os.path.join(root, file))
         print(len(images))
                 
-        tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+        tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
         for i in range(self.batch_num):
             for j in range(self.batch_size):
                 img = Image.open(images[i*self.batch_size + j])
@@ -97,7 +97,7 @@ class DataRead:
         self.crop_images = tmp_big
         # =====================================result images===========================
         # preparing the space
-        self.result_images = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+        self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
         #===================================reading in the csv
         csv_path = 'out_' + self.type + '.csv'
         with open(csv_path, "r") as infile:
@@ -143,7 +143,7 @@ class DataRead:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))
             print(len(images))
                 
-            tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             for i in range(self.batch_num):
                 for j in range(self.batch_size):
                     img = Image.open(images[i*self.batch_size + j + self.end_point])
@@ -160,7 +160,7 @@ class DataRead:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))
             print(len(images))
                 
-            tmp = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             for i in range(self.batch_num):
                 for j in range(self.batch_size):
                     img = Image.open(images[i*self.batch_size + j + self.end_point])
@@ -190,7 +190,7 @@ class DataRead:
             self.crop_images = tmp_big
             # =====================================result images===========================
             # preparing the space
-            self.result_images = np.zeros((self.batch_num, self.batch_size, 256, 256, 3))
+            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             #===================================reading in the csv
             csv_path = 'out_' + self.type + '.csv'
             with open(csv_path, "r") as infile:
