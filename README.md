@@ -14,7 +14,7 @@
 
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
 
-Link for the data with the chosen classes:
+Link for the data with the chosen classes:(not available anymore)
 https://drive.google.com/file/d/15SSnj3CllTz_73jKHOVU-9HpYgRpxAYm/view?usp=sharing
 
 Link for the data with only train data:
@@ -22,3 +22,6 @@ https://drive.google.com/file/d/1WGVtHwXxGNojM5xvq0EinaTX_q-o_rUA/view?usp=shari
 
 Link for the data with train, validation and test data:
 https://drive.google.com/file/d/15Y-wFgWVc06hFLslSP_ABl3cr-LPMwOQ/view?usp=sharing
+
+Link for the data with the 64x64 pictures:
+https://drive.google.com/file/d/1WGVtHwXxGNojM5xvq0EinaTX_q-o_rUA/view?usp=sharing
