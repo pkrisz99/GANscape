@@ -24,4 +24,4 @@ Link for the data with train, validation and test data:
 https://drive.google.com/file/d/15Y-wFgWVc06hFLslSP_ABl3cr-LPMwOQ/view?usp=sharing
 
 Link for the data with the 64x64 pictures:
-https://drive.google.com/file/d/1WGVtHwXxGNojM5xvq0EinaTX_q-o_rUA/view?usp=sharing
+https://drive.google.com/file/d/1mkQG3OeBWKsnZNwciwP6k0wGEAoVUMTM/view?usp=sharing
