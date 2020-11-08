@@ -26,5 +26,5 @@ https://drive.google.com/file/d/15Y-wFgWVc06hFLslSP_ABl3cr-LPMwOQ/view?usp=shari
 Link for the data with the 64x64 pictures:
 https://drive.google.com/file/d/1mkQG3OeBWKsnZNwciwP6k0wGEAoVUMTM/view?usp=sharing
 
-Link for the data with the 64x64 pictures:
+Link for the data with the 64x64 pictures that have 28x28 cropped parts:
 https://drive.google.com/file/d/1_RrWfKYkiXOKfmU8UxtWFqMNqNKQtQGF/view?usp=sharing
