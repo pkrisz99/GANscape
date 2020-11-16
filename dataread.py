@@ -6,7 +6,6 @@ Created on Wed Nov  4 19:21:10 2020
 """
 
 import os
-import os
 from PIL import Image
 import numpy as np
 import random
@@ -14,10 +13,11 @@ import csv
 
 
 class DataRead:
-    def __init__(self, folder_path, data_type, batch_size, batch_num):
+    def __init__(self, folder_path, data_type, batch_size, batch_num, shuffle = False, seed = False):
         self.folder_path = folder_path
         self.type = data_type
-        
+        self.shuffle = shuffle
+        self.seed = seed
        
         self.length = batch_num*batch_size
             
@@ -42,79 +42,211 @@ class DataRead:
         else:
             print("error, no such data_type")
             
-        #===================================reading in the csv
-        csv_path = 'out_' + self.type + '.csv'
-        csv_path = os.path.join(self.folder_path, csv_path)
-        with open(csv_path, "r") as infile:
-            r = csv.reader(infile)
-            tmp_big = []
+        if (self.shuffle == True):
+            # ======================target images=============================
+            path = os.path.join(self.folder_path, self.target_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
+            #setting the shuffle:=============================================
+            order = np.arange(len(images))
+            order = list(order)
+            if (seed == True):
+                random.seed(42)
+            random.shuffle(order)
+            self.order = order
+            #=================================================================
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             for i in range(self.batch_num):
-                tmp_small = []
                 for j in range(self.batch_size):
-                    row = next(r)
-                    row = row[1:]
-                    row = list(map(int, row)) #itt lehetne még egy np.array alakítás
-                    tmp_small.append(row)
-                
-                tmp_big.append(tmp_small)
-        
-        self.csv = tmp_big
-        # ======================target images=====================
-        path = os.path.join(self.folder_path, self.target_path)
-        
-        images = []
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith('.jpg'): images.append(os.path.join(root, file))
-        print(len(images))
-                
-        tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-        for i in range(self.batch_num):
-            for j in range(self.batch_size):
-                img = Image.open(images[i*self.batch_size + j])
-                img_temp=np.array(img)
-                tmp[i,j]  =  img_temp
+                    img = Image.open(images[self.order[i*self.batch_size + j]])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.target_images = tmp
+            # ============================train images-cropped=============================
+            path = os.path.join(self.folder_path, self.cropped_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
                     
-        self.target_images = tmp
-        # ============================train images-cropped=============================
-        path = os.path.join(self.folder_path, self.cropped_path)
-        
-        images = []
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith('.jpg'): images.append(os.path.join(root, file))
-        print(len(images))
-                
-        tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-        for i in range(self.batch_num):
-            for j in range(self.batch_size):
-                img = Image.open(images[i*self.batch_size + j])
-                img_temp=np.array(img)
-                tmp[i,j]  =  img_temp
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[self.order[i*self.batch_size + j]])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.cropped_images = tmp
+            # =============================train images-crop===========================
+            path = os.path.join(self.folder_path, self.crop_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))    
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[self.order[i*self.batch_size + j]])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.crop_images = tmp
+            # =====================================result images===========================
+            # preparing the space
+            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            
+           
+            #===================================reading in the csv
+            tmp = np.zeros(((len(images)), 8))
+            csv_path = 'out_' + self.type + '.csv'
+            csv_path = os.path.join(self.folder_path, csv_path)
+            with open(csv_path, "r") as infile:
+                r = csv.reader(infile)
+                i = 0
+                for row in r:
+                    newrow = row[1:]
+                    newrow = list(map(int, newrow))
+                    newrow = np.array(newrow)
+                    tmp[i] = newrow
+                    i += 1
+            tmp = tmp.astype('int32')
+            self.longcsv = tmp
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 8))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    csv_temp = self.longcsv[self.order[i*self.batch_size + j]]
+                    tmp[i,j]  =  csv_temp
+            
+            tmp = tmp.astype('int32')
+            self.csv = tmp
                     
-        self.cropped_images = tmp
-        # =============================train images-crop===========================
-        path = os.path.join(self.folder_path, self.crop_path)
-        
-        images = []
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith('.jpg'): images.append(os.path.join(root, file))
-        print(len(images))    
-        
-        tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
-        for i in range(self.batch_num):
-            for j in range(self.batch_size):
-                img = Image.open(images[i*self.batch_size + j])
-                img_temp=np.array(img)
-                tmp[i,j]  =  img_temp
+            '''
+                tmp_big = []
+                for i in range(self.batch_num):
+                    tmp_small = []
+                    for j in range(self.batch_size):
+                        row = next(r)
+                        row = row[1:]
+                        row = list(map(int, row)) #itt lehetne még egy np.array alakítás
+                        tmp_small.append(row)
                     
-        self.crop_images = tmp
-        # =====================================result images===========================
-        # preparing the space
-        self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-       
-                 
+                    tmp_big.append(tmp_small)
+            
+            self.csv = tmp_big
+            '''
+            
+        else:
+           # ======================target images=====================
+            path = os.path.join(self.folder_path, self.target_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
+            
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.target_images = tmp
+            # ============================train images-cropped=============================
+            path = os.path.join(self.folder_path, self.cropped_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))
+                    
+            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.cropped_images = tmp
+            # =============================train images-crop===========================
+            path = os.path.join(self.folder_path, self.crop_path)
+            
+            images = []
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
+            print(len(images))    
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    img = Image.open(images[i*self.batch_size + j])
+                    img_temp=np.array(img)
+                    tmp[i,j]  =  img_temp
+                        
+            self.crop_images = tmp
+            # =====================================result images===========================
+            # preparing the space
+            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            
+            #===================================reading in the csv
+            tmp = np.zeros(((len(images)), 8))
+            csv_path = 'out_' + self.type + '.csv'
+            csv_path = os.path.join(self.folder_path, csv_path)
+            with open(csv_path, "r") as infile:
+                r = csv.reader(infile)
+                i = 0
+                for row in r:
+                    newrow = row[1:]
+                    newrow = list(map(int, newrow))
+                    newrow = np.array(newrow)
+                    tmp[i] = newrow
+                    i += 1
+            tmp = tmp.astype('int32')
+            self.longcsv = tmp
+            
+            tmp = np.zeros((self.batch_num, self.batch_size, 8))
+            for i in range(self.batch_num):
+                for j in range(self.batch_size):
+                    csv_temp = self.longcsv[i*self.batch_size + j]
+                    tmp[i,j]  =  csv_temp
+            
+            tmp = tmp.astype('int32')
+            self.csv = tmp
+            
+            '''
+            csv_path = 'out_' + self.type + '.csv'
+            csv_path = os.path.join(self.folder_path, csv_path)
+            with open(csv_path, "r") as infile:
+                r = csv.reader(infile)
+                tmp_big = []
+                for i in range(self.batch_num):
+                    tmp_small = []
+                    for j in range(self.batch_size):
+                        row = next(r)
+                        row = row[1:]
+                        row = list(map(int, row)) #itt lehetne még egy np.array alakítás
+                        tmp_small.append(row)
+                    
+                    tmp_big.append(tmp_small)
+            
+            self.csv = tmp_big
+            '''     
         #important parts
         # self.batch_num
         # self.batch_size
@@ -135,79 +267,142 @@ class DataRead:
         
         
         if ((len(images)-self.end_point) > self.length ):
-             # ======================target images=====================
-            path = os.path.join(self.folder_path, self.target_path)
-        
-            images = []
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
-            print(len(images))
+            if (self.shuffle == True):
                 
-            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-            for i in range(self.batch_num):
-                for j in range(self.batch_size):
-                    img = Image.open(images[i*self.batch_size + j + self.end_point])
-                    img_temp=np.array(img)
-                    tmp[i,j]  =  img_temp
+                # ======================target images=====================
+                path = os.path.join(self.folder_path, self.target_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))
                     
-            self.target_images = tmp
-            # ============================train images-cropped=============================
-            path = os.path.join(self.folder_path, self.cropped_path)
-        
-            images = []
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
-            print(len(images))
-                
-            tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-            for i in range(self.batch_num):
-                for j in range(self.batch_size):
-                    img = Image.open(images[i*self.batch_size + j + self.end_point])
-                    img_temp=np.array(img)
-                    tmp[i,j]  =  img_temp
-                    
-            self.cropped_images = tmp
-            # =============================train images-crop===========================
-            path = os.path.join(self.folder_path, self.crop_path)
-        
-            images = []
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    if file.endswith('.jpg'): images.append(os.path.join(root, file))
-            print(len(images))    
-                
-            tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
-            for i in range(self.batch_num):
-                for j in range(self.batch_size):
-                    img = Image.open(images[i*self.batch_size + j])
-                    img_temp=np.array(img)
-                    tmp[i,j]  =  img_temp
-                    
-            self.crop_images = tmp
-            # =====================================result images===========================
-            # preparing the space
-            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
-            #===================================reading in the csv
-            csv_path = 'out_' + self.type + '.csv'
-            with open(csv_path, "r") as infile:
-                r = csv.reader(infile)
-                for i in range(self.end_point):
-                    next(r)
-                tmp_big = []
+                tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
                 for i in range(self.batch_num):
-                    tmp_small = []
                     for j in range(self.batch_size):
-                        row = next(r)
-                        row = row[1:]
-                        row = list(map(int, row)) #itt lehetne még egy np.array alakítás
-                        tmp_small.append(row)
+                        img = Image.open(images[self.order[i*self.batch_size + j + self.end_point]])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.target_images = tmp
+                # ============================train images-cropped=============================
+                path = os.path.join(self.folder_path, self.cropped_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))
+                    
+                tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        img = Image.open(images[self.order[i*self.batch_size + j + self.end_point]])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.cropped_images = tmp
+                # =============================train images-crop===========================
+                path = os.path.join(self.folder_path, self.crop_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))    
+                    
+                tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        img = Image.open(images[self.order[i*self.batch_size + j + self.end_point]])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.crop_images = tmp
+                # =====================================result images===========================
+                # preparing the space
+                self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                #===================================reading in the csv
+               
+                tmp = np.zeros((self.batch_num, self.batch_size, 8))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        csv_temp = self.longcsv[self.order[i*self.batch_size + j + self.end_point]]
+                        tmp[i,j]  =  csv_temp
+            
+                tmp = tmp.astype('int32')
+                self.csv = tmp
+               
+                self.end_point = self.end_point + self.length
                 
-                    tmp_big.append(tmp_small)
-        
-            self.csv = tmp_big
-            self.end_point = self.end_point + self.length
+            else:
+            
+                # ======================target images=====================
+                path = os.path.join(self.folder_path, self.target_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))
+                    
+                tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        img = Image.open(images[i*self.batch_size + j + self.end_point])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.target_images = tmp
+                # ============================train images-cropped=============================
+                path = os.path.join(self.folder_path, self.cropped_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))
+                    
+                tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        img = Image.open(images[i*self.batch_size + j + self.end_point])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.cropped_images = tmp
+                # =============================train images-crop===========================
+                path = os.path.join(self.folder_path, self.crop_path)
+            
+                images = []
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        if file.endswith('.jpg'): images.append(os.path.join(root, file))
+                print(len(images))    
+                    
+                tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        img = Image.open(images[i*self.batch_size + j])
+                        img_temp=np.array(img)
+                        tmp[i,j]  =  img_temp
+                        
+                self.crop_images = tmp
+                # =====================================result images===========================
+                # preparing the space
+                self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                #===================================reading in the csv
+                tmp = np.zeros((self.batch_num, self.batch_size, 8))
+                for i in range(self.batch_num):
+                    for j in range(self.batch_size):
+                        csv_temp = self.longcsv[i*self.batch_size + j]
+                        tmp[i,j]  =  csv_temp
+            
+                tmp = tmp.astype('int32')
+                self.csv = tmp
+                
+                self.end_point = self.end_point + self.length
         else:
             print("not enough pictures for a next group of batches, try changing the batch_num is it is possible")
     
