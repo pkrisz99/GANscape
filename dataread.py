@@ -42,6 +42,7 @@ class DataRead:
         else:
             print("error, no such data_type")
             
+            
         if (self.shuffle == True):
             # ======================target images=============================
             path = os.path.join(self.folder_path, self.target_path)
@@ -114,12 +115,13 @@ class DataRead:
             with open(csv_path, "r") as infile:
                 r = csv.reader(infile)
                 i = 0
-                for row in r:
+                for i in range(len(images)):
+                    row = next(r)
                     newrow = row[1:]
                     newrow = list(map(int, newrow))
                     newrow = np.array(newrow)
                     tmp[i] = newrow
-                    i += 1
+                    #i += 1
             tmp = tmp.astype('int32')
             self.longcsv = tmp
             
@@ -211,12 +213,13 @@ class DataRead:
             with open(csv_path, "r") as infile:
                 r = csv.reader(infile)
                 i = 0
-                for row in r:
+                for i in range(len(images)):
+                    row = next(r)
                     newrow = row[1:]
                     newrow = list(map(int, newrow))
                     newrow = np.array(newrow)
                     tmp[i] = newrow
-                    i += 1
+                    #i += 1
             tmp = tmp.astype('int32')
             self.longcsv = tmp
             
@@ -384,7 +387,7 @@ class DataRead:
                 tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))
                 for i in range(self.batch_num):
                     for j in range(self.batch_size):
-                        img = Image.open(images[i*self.batch_size + j])
+                        img = Image.open(images[i*self.batch_size + j + self.end_point])
                         img_temp=np.array(img)
                         tmp[i,j]  =  img_temp
                         
@@ -396,7 +399,7 @@ class DataRead:
                 tmp = np.zeros((self.batch_num, self.batch_size, 8))
                 for i in range(self.batch_num):
                     for j in range(self.batch_size):
-                        csv_temp = self.longcsv[i*self.batch_size + j]
+                        csv_temp = self.longcsv[i*self.batch_size + j + self.end_point]
                         tmp[i,j]  =  csv_temp
             
                 tmp = tmp.astype('int32')
