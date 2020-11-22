@@ -18,9 +18,7 @@
 - So at the this left us with 3x203k images, with a total size of 807 Megabytes
 
 ## dataloading class
-- In order to make the loading in of the pictures smooth, we made an individual class for this purpose
-- DataRead class stores the needed data for the training 
-- Further information about this is class is in the doc folder
+In order to make the loading in of the pictures smooth, we made an individual class for this purpose. The DataRead class stores the needed data for the training. Further information about this is class is in the doc folder
 
 ## Constructing the network
 - While constructing the network we relied heavily on the article: http://iizuka.cs.tsukuba.ac.jp/projects/completion/data/completion_sig2017.pdf and also on the implementation of a netwrok based on this article: https://github.com/V1NAY8/glcic
