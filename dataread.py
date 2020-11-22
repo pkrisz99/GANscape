@@ -105,7 +105,7 @@ class DataRead:
             self.crop_images = tmp
             # =====================================result images===========================
             # preparing the space
-            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            #self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             
            
             #===================================reading in the csv
@@ -204,7 +204,7 @@ class DataRead:
             self.crop_images = tmp
             # =====================================result images===========================
             # preparing the space
-            self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+            #self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
             
             #===================================reading in the csv
             tmp = np.zeros(((len(images)), 8))
@@ -325,7 +325,7 @@ class DataRead:
                 self.crop_images = tmp
                 # =====================================result images===========================
                 # preparing the space
-                self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                #self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
                 #===================================reading in the csv
                
                 tmp = np.zeros((self.batch_num, self.batch_size, 8))
@@ -394,7 +394,7 @@ class DataRead:
                 self.crop_images = tmp
                 # =====================================result images===========================
                 # preparing the space
-                self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
+                #self.result_images = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))
                 #===================================reading in the csv
                 tmp = np.zeros((self.batch_num, self.batch_size, 8))
                 for i in range(self.batch_num):
