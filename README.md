@@ -47,6 +47,8 @@ https://drive.google.com/file/d/1mkQG3OeBWKsnZNwciwP6k0wGEAoVUMTM/view?usp=shari
 Link for the data with the 64x64 pictures that have 28x28 cropped parts:
 https://drive.google.com/file/d/1_RrWfKYkiXOKfmU8UxtWFqMNqNKQtQGF/view?usp=sharing
 
+Link for the data with the 64x64 pictures that have 28x28 cropped parts(fixed):
+https://drive.google.com/file/d/1N9R-XnwEJuN2W6rURWloKTZdHW1UQcku/view?usp=sharing
 
 ## Training and validation log output (1 epoch)
 ```python
