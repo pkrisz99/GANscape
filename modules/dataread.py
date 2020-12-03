@@ -53,6 +53,7 @@ class DataRead:
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))#getting the pathss to the pictures
             print(len(images)) # checking the number of images
+            images.sort()
             #setting the shuffle:=============================================
             order = np.arange(len(images)) #the number of all the images
             order = list(order)
@@ -78,7 +79,8 @@ class DataRead:
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))#getting the paths of the pictures
             print(len(images))#checking the number of images
-                    
+            images.sort()
+            
             tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))# making space for the pictures
             for i in range(self.batch_num):
                 for j in range(self.batch_size):
@@ -95,6 +97,7 @@ class DataRead:
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file)) # paths of the pics
             print(len(images))    # checking the number of pics
+            images.sort()
             
             tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3)) # makking space for the pics
             for i in range(self.batch_num):
@@ -160,6 +163,10 @@ class DataRead:
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))# pic paths
             print(len(images))
+            images.sort()
+            
+            for i in range(100):
+                print(images[i])
             
             
             tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))# making space
@@ -178,6 +185,7 @@ class DataRead:
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))# pic paths
             print(len(images))
+            images.sort()
                     
             tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))#making space
             for i in range(self.batch_num):
@@ -194,7 +202,8 @@ class DataRead:
             for root, dirs, files in os.walk(path):
                 for file in files:
                     if file.endswith('.jpg'): images.append(os.path.join(root, file))#ppic paths
-            print(len(images))    
+            print(len(images)) 
+            images.sort()
             
             tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))#making space
             for i in range(self.batch_num):
@@ -269,7 +278,7 @@ class DataRead:
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file.endswith('.jpg'): images.append(os.path.join(root, file))#collecting the paths to the images
-        
+        #images.sort()
         
         if ((len(images)-self.end_point) > self.length ): # if we have enough pictures left
             if (self.shuffle == True): # cheking the shuffle
@@ -282,6 +291,7 @@ class DataRead:
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#collecting the paths to the images
                 print(len(images))
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))# place for the new pics
                 for i in range(self.batch_num):
@@ -299,6 +309,7 @@ class DataRead:
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#pic paths
                 print(len(images))
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))#making space
                 for i in range(self.batch_num):
@@ -315,7 +326,8 @@ class DataRead:
                 for root, dirs, files in os.walk(path):
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#pic paths
-                print(len(images))    
+                print(len(images)) 
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))#making space
                 for i in range(self.batch_num):
@@ -351,6 +363,7 @@ class DataRead:
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#pic paths
                 print(len(images))
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))#making space
                 for i in range(self.batch_num):
@@ -368,6 +381,7 @@ class DataRead:
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#pic paths
                 print(len(images))
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 64, 64, 3))#making space
                 for i in range(self.batch_num):
@@ -385,6 +399,7 @@ class DataRead:
                     for file in files:
                         if file.endswith('.jpg'): images.append(os.path.join(root, file))#pic paths
                 print(len(images))    
+                images.sort()
                     
                 tmp = np.zeros((self.batch_num, self.batch_size, 28, 28, 3))#making space
                 for i in range(self.batch_num):

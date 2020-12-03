@@ -82,9 +82,9 @@ def generateAndPlotImgs(net, dataObj, plotImgsDict, numOfBatchesLoadedAtOnce, re
       #for actImg, params in zip(globalFakeImgs, dataObj.csv[batchInd, start:end]):
       #  print(f"{i}th imgmap, {j}th img, csv params={params}\n")
       localFakeImgs = np.asarray(localFakeImgs)
-
-      for actImg, params in zip(globalFakeImgs, dataObj.csv[batchInd, start:end]):
-        actImg[params[4]:params[6]+1, params[5]:params[7]+1, :] = 0
+    
+      #for actImg, params in zip(globalFakeImgs, dataObj.csv[batchInd, start:end]):
+      #  actImg[params[4]:params[6]+1, params[5]:params[7]+1, :] = 0
 
       #scale output values from [0, 1] to [0, 255]
       globalFakeImgs = (globalFakeImgs*255).astype('uint8')
