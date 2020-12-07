@@ -1,5 +1,5 @@
 from keras.layers import Input, Activation, Dense, Reshape, Flatten, Dropout, multiply, GaussianNoise, Lambda
-from keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D
+from keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D, GlobalAveragePooling2D
 from keras.layers import Concatenate
 from keras.layers.advanced_activations import ReLU
 from keras.layers.convolutional import UpSampling2D, Conv2D, Conv2DTranspose

@@ -24,7 +24,7 @@ from plotter import generateAndPlotImgs, plotImages
 #   numOfBatchesLoadedAtOnce: number that decsribes how many batch of data we are storing in the memory at once
 
 
-def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoadedAtOnce, plotImgsDict, paths):
+def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoadedAtOnce, plotImgsDict, earlyStopPhases, paths):
 
     date_time = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
 
@@ -128,11 +128,18 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   #handle STDOUT logging for phase two
                   trainLoss["phaseII"]["num"] += 1
                   trainLoss["phaseII"]["loss"] += ret
-                  actualInfo = f"---Epoch {epoch} --- Step {t} --- PHASE II --- disc_adversarial_loss={trainLoss['phaseII']['loss']/trainLoss['phaseII']['num']}"
+                  discAdvCumSum = trainLoss['phaseII']['loss']/trainLoss['phaseII']['num']
+                  actualInfo = f"---Epoch {epoch} --- Step {t} --- PHASE II --- disc_adversarial_loss={discAdvCumSum}"
 
                   #save phase two loss for TENSORBOARD logging
                   memoryForTrainLosses["phaseII"] = ret
                   tf.summary.scalar("train_II_disc_adversarial_loss", memoryForTrainLosses["phaseII"], step=stepForTrainLosses)
+
+                  #"early stop" for phase II
+                  
+                  if discAdvCumSum < earlyStopPhases["phaseTwo"]["minForDiscAdv"]:
+                    t = tC + tD
+                    actualInfo += " --- loss condition activated -> PHASE II ENDS NOW\n"
 
 
               else:
@@ -159,7 +166,9 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   trainLoss["phaseIII"]["lossGen"][0] += retG[0]
                   trainLoss["phaseIII"]["lossGen"][1] += retG[1]
                   trainLoss["phaseIII"]["lossGen"][2] += retG[2]
-                  actualInfo = f'---Epoch {epoch} --- Step {t} --- PHASE III --- disc_adversarial_loss={trainLoss["phaseIII"]["lossDisc"]/trainLoss["phaseIII"]["num"]} --- gen_joint_loss={trainLoss["phaseIII"]["lossGen"][0]/trainLoss["phaseIII"]["num"]} --- gen_mse_loss={trainLoss["phaseIII"]["lossGen"][1]/trainLoss["phaseIII"]["num"]} --- gen_adversarial_loss={trainLoss["phaseIII"]["lossGen"][2]/trainLoss["phaseIII"]["num"]}'
+                  discAdvCumSum = trainLoss["phaseIII"]["lossDisc"]/trainLoss["phaseIII"]["num"]
+                  genAdvCumSum = trainLoss["phaseIII"]["lossGen"][2]/trainLoss["phaseIII"]["num"]
+                  actualInfo = f'---Epoch {epoch} --- Step {t} --- PHASE III --- disc_adversarial_loss={discAdvCumSum} --- gen_joint_loss={trainLoss["phaseIII"]["lossGen"][0]/trainLoss["phaseIII"]["num"]} --- gen_mse_loss={trainLoss["phaseIII"]["lossGen"][1]/trainLoss["phaseIII"]["num"]} --- gen_adversarial_loss={genAdvCumSum}'
 
                   #save phase three loss for TENSORBOARD logging
                   memoryForTrainLosses["phaseIII"]["disc"] = retD
@@ -171,6 +180,12 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   tf.summary.scalar("train_III_gen_mse_loss", memoryForTrainLosses["phaseIII"]["gen"][1], step=stepForTrainLosses)
                   tf.summary.scalar("train_III_gen_adversarial_loss", memoryForTrainLosses["phaseIII"]["gen"][2], step=stepForTrainLosses)
                   
+                  #"early stop" for phase III
+                  if (discAdvCumSum < earlyStopPhases["phaseThree"]["minForDiscAdv"]) or (genAdvCumSum > earlyStopPhases["phaseThree"]["maxForGenAdv"]):
+                    t = stepsPerEpoch["train"]
+                    actualInfo += " --- loss condition activated -> PHASE III ENDS NOW\n"
+
+
 
               clear_output()
               print(stdOut + actualInfo)
