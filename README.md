@@ -81,14 +81,14 @@ Letting a well configured network train for 6 hours yielded the following result
 
 
 ## References
-Original dataset:
-A 10 million Image Database for Scene Recognition
-B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba
-IEEE Transactions on Pattern Analysis and Machine Intelligence, 2017
+Original dataset:  
+A 10 million Image Database for Scene Recognition  
+B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba  
+IEEE Transactions on Pattern Analysis and Machine Intelligence, 2017  
 
-Original network implementation:
-Globally and Locally Consistent Image Completion
-P. Sai Vinay
-https://github.com/V1NAY8/glcic
+Original network implementation:  
+Globally and Locally Consistent Image Completion  
+P. Sai Vinay  
+https://github.com/V1NAY8/glcic  
 
 More references can be found in the documentation.
