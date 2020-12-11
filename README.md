@@ -4,11 +4,11 @@
 **Documentation**: coming soon
 
 ## Authors
-- Kovács Richárd (@Ricsard13)
-- Dulácska Mátyás (@dulacskamty)
-- Peőcz Krisztián (@pkrisz99)
+- Richárd Kovács (@Ricsard13)
+- Mátyás Dulácska (@dulacskamty)
+- Krisztián Peőcz (@pkrisz99)
 
-## Steps for compiling the databank
+## Steps for compiling the dataset
 - We downloaded the **Places365-Standard** 256x256 train database from http://places2.csail.mit.edu/download.html
 - Out of the about 1.8 million images, 244k were from categories, that we considered potentially useful.
 - The YOLOv3 neural network was used to exclude images that contained people. We did this by distributing files into smaller folders, so that can be run on Colaboratory, but we used our CPU's as well. A batch of 10k images took about 4 hours to process.
@@ -17,14 +17,14 @@
 - An other script was used to cut out parts of the images. The original images, the cut out parts and the modified images were all saved, along with the coordinates of the cut out parts.
 - Finally this left us with 3x203k images, with a total size of 5.4 gigabytes.
 
-## Reducing image dimension to optimize for computation time
+### Reducing image dimension to optimize for computation time
 - While the 256x256 image size creates a nice balance between image quality and computational requirements, we moved down to 64x64 to speed up computing on our limited resources.
 - We varied the crop size from 20x20 to 25x25, which means that 10 to 15% of the area of the picure will be cropped.
 - Around these crops we define a unifrom 28x28 rectangle. This was important, because one of the network's inputs is the cropped part, and we need an input that has the same dimensions.
 - Both the test and the validation spilt stayed the same.
 - So this left us with 3x203k images, with a total size of 807 megabytes.
 
-### Links for the databank
+### Links for the dataset
 
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
 
@@ -60,7 +60,7 @@ We defined the base network with the following parameters:
 - Batch size: 128
 - Discriminator global average pooling: false
 - Generator bottleneck: 4
-Then we deviated from this by changing one parameter. We ran the training for 10 epochs and compared the results:
+Then we deviated from this by changing one parameter. We ran the training for 10 epochs and compared the results on a scale of 1 to 10:
 
 |    Hyperparameter   | Local score | Global score |   Average   |
 |:-------------------:|:-----------:|:------------:|:-----------:|
@@ -76,6 +76,7 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 
 ### Example picture
 Letting a well configured network train for 6 hours yielded the following result:
+
 ![example image](images/example.jpg)
 
 
