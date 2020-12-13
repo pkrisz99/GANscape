@@ -92,7 +92,9 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 </p>
 
 
-The network works well with images, that has a repetitive, blurred, or predictable structure. Close-up wildlife, such as animals or trees can be a problem.
+After we selected the advantageous hyperparameters, we let the training run for about 24 hours. 
+The network works well with images that has a repetitive, blurred, or predictable structure.
+Close-up wildlife, such as animals or trees can be a problem.
 The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.
 In the above image, we show some uses for this network, like removing unwanted people, objects, text, and faults from the images.
 
