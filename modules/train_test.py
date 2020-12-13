@@ -1,5 +1,5 @@
-from PIL import Image  
-import PIL  
+from PIL import Image
+import PIL
 import matplotlib.pyplot as plt
 import os
 from IPython.display import clear_output
@@ -24,7 +24,7 @@ from plotter import generateAndPlotImgs, plotImages
 #   numOfBatchesLoadedAtOnce: number that decsribes how many batch of data we are storing in the memory at once
 
 
-def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoadedAtOnce, plotImgsDict, earlyStopPhases, paths):
+def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoadedAtOnce, plotImgsDict, earlyStopPhases, whatToSave, paths):
 
     date_time = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
 
@@ -43,7 +43,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
         "genJoint": 9999999999999999999,
         "epochMse": "",
         "epochJoint": ""
-    } 
+    }
 
     stepForValidLosses = 1
     stepForTrainLosses = 0
@@ -100,7 +100,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                       x = trainData.cropped_images[c]/255,
                       y = trainData.target_images[c]/255,
                       reset_metrics=True)
-                  
+
                   #handle STDOUT logging for phase one
                   trainLoss["phaseI"]["num"] += 1
                   trainLoss["phaseI"]["loss"] += ret
@@ -110,9 +110,9 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   memoryForTrainLosses["phaseI"] = ret
                   tf.summary.scalar("train_I_gen_mse_loss", memoryForTrainLosses["phaseI"], step=stepForTrainLosses)
 
-                  
 
-                  
+
+
 
               elif t <= (tC + tD):
                   # ---------------------
@@ -124,7 +124,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                       x = [trainData.cropped_images[c]/255, trainData.csv[c,:,4:], trainData.target_images[c]/255],
                       y = dummyLabels,
                       reset_metrics=True)
-                  
+
                   #handle STDOUT logging for phase two
                   trainLoss["phaseII"]["num"] += 1
                   trainLoss["phaseII"]["loss"] += ret
@@ -136,7 +136,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   tf.summary.scalar("train_II_disc_adversarial_loss", memoryForTrainLosses["phaseII"], step=stepForTrainLosses)
 
                   #"early stop" for phase II
-                  
+
                   if discAdvCumSum < earlyStopPhases["phaseTwo"]["minForDiscAdv"]:
                     t = tC + tD
                     actualInfo += " --- loss condition activated -> PHASE II ENDS NOW\n"
@@ -152,14 +152,14 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                       x=[trainData.cropped_images[c]/255, trainData.csv[c,:,4:], trainData.target_images[c]/255],
                       y=[trainData.target_images[c]/255, dummyLabels],
                       reset_metrics=True)
-                  
+
                   net.generator.trainable = False
                   net.discriminator.trainable = True
                   retD = net.modelForTrainOnlyDisc.train_on_batch(
                       x = [trainData.cropped_images[c]/255, trainData.csv[c,:,4:], trainData.target_images[c]/255],
                       y = dummyLabels,
                       reset_metrics=True)
-                  
+
                   #handle STDOUT logging for phase three
                   trainLoss["phaseIII"]["num"] += 1
                   trainLoss["phaseIII"]["lossDisc"] += retD
@@ -179,7 +179,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
                   tf.summary.scalar("train_III_gen_joint_loss", memoryForTrainLosses["phaseIII"]["gen"][0], step=stepForTrainLosses)
                   tf.summary.scalar("train_III_gen_mse_loss", memoryForTrainLosses["phaseIII"]["gen"][1], step=stepForTrainLosses)
                   tf.summary.scalar("train_III_gen_adversarial_loss", memoryForTrainLosses["phaseIII"]["gen"][2], step=stepForTrainLosses)
-                  
+
                   #"early stop" for phase III
                   if (discAdvCumSum < earlyStopPhases["phaseThree"]["minForDiscAdv"]) or (genAdvCumSum > earlyStopPhases["phaseThree"]["maxForGenAdv"]):
                     t = stepsPerEpoch["train"]
@@ -192,7 +192,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
               #save std out if phase-switch will happen in next iteration or this is last iteration in epoch
               if (t == tC) or (t == tC + tD) or (t == stepsPerEpoch["train"]):
                   stdOut += actualInfo + "\n"
-              
+
 
               #save model if configured period implies that or this is last iteration in epoch
               """
@@ -237,7 +237,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
               validLoss["num"] += 1
               """
               retGenMSE = net.modelForTrainOnlyGenWithMSE.test_on_batch(
-                          x = validData.cropped_images[c], 
+                          x = validData.cropped_images[c],
                           y = validData.target_images[c],
                           reset_metrics=True)
               validLoss["genOnlyMSE"] += retGenMSE
@@ -245,17 +245,17 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
               """
 
               retD = net.modelForTrainOnlyDisc.test_on_batch(
-                          x = [validData.cropped_images[c]/255, validData.csv[c,:,4:], validData.target_images[c]/255], 
+                          x = [validData.cropped_images[c]/255, validData.csv[c,:,4:], validData.target_images[c]/255],
                           y = dummyLabels,
                           reset_metrics=True)
 
               validLoss["discAdversarial"] += retD
-              
+
               actualInfo += "\n"
               actualInfo += f"---Epoch {epoch} --- Step {t+1} --- VALIDATION --- disc_adversarial_loss={validLoss['discAdversarial']/validLoss['num']}"
-              
+
               retGJoint = net.modelForTrainOnlyGenWithJoint.test_on_batch(
-                          x = [validData.cropped_images[c]/255, validData.csv[c,:,4:], validData.target_images[c]/255], 
+                          x = [validData.cropped_images[c]/255, validData.csv[c,:,4:], validData.target_images[c]/255],
                           y = [validData.target_images[c]/255, dummyLabels],
                           sample_weight=None,
                           reset_metrics=True)
@@ -265,14 +265,14 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
               validLoss["genJoint"][2] += retGJoint[2]
               actualInfo += "\n"
               actualInfo += f"---Epoch {epoch} --- Step {t+1} --- VALIDATION --- gen_joint_loss={validLoss['genJoint'][0]/validLoss['num']} --- gen_mse_loss={validLoss['genJoint'][1]/validLoss['num']} --- gen_adversarial_loss={validLoss['genJoint'][2]/validLoss['num']}"
-              
+
               clear_output()
               print(stdOut + actualInfo)
               #save std out if this is the last iteration in epoch
               if (t == stepsPerEpoch["valid"]):
                   stdOut += actualInfo + "\n"
 
-              
+
               #tf.summary.scalar("valid_I_gen_mse_loss", retGenMSE, step=stepForValidLosses)
               tf.summary.scalar("valid_disc_adversarial_loss", retD, step=stepForValidLosses)
               tf.summary.scalar("valid_gen_joint_loss", retGJoint[0], step=stepForValidLosses)
@@ -288,32 +288,29 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
           #------------------------------------------------SAVE MODEL--------------------------------------
           dateFolder = os.path.join(paths["saveModelDir"], date_time)
 
-          finalGenMseLoss = validLoss['genJoint'][1]/validLoss['num']
-          if bestValidLoss["genMse"] > finalGenMseLoss:
-            net.generator.save(os.path.join(os.path.join(dateFolder, "gen_mse_best"), "generator"))
-            net.discriminator.save(os.path.join(os.path.join(dateFolder, "gen_mse_best"), "discriminator"))
-            #net.modelForTrainOnlyGenWithMSE.save(os.path.join(os.path.join(dateFolder, f"gen_mse_best"), "train_model_generator_only_mse"))
-            #net.modelForTrainOnlyDisc.save(os.path.join(os.path.join(dateFolder, f"gen_mse_best"), "train_model_disc"))
-            #net.modelForTrainOnlyGenWithJoint.save(os.path.join(os.path.join(dateFolder, f"gen_mse_best"), "train_model_generator_joint"))
-            #net.generatorForPredict.save(os.path.join(os.path.join(dateFolder, f"gen_mse_best"), "predict_model_generator"))
-            bestValidLoss["genMse"] = finalGenMseLoss
-            bestValidLoss["epochMse"] = epoch
+          if whatToSave == 'best':
+              finalGenMseLoss = validLoss['genJoint'][1]/validLoss['num']
+              if bestValidLoss["genMse"] > finalGenMseLoss:
+                net.generator.save(os.path.join(os.path.join(dateFolder, "gen_mse_best"), "generator"))
+                net.discriminator.save(os.path.join(os.path.join(dateFolder, "gen_mse_best"), "discriminator"))
+                bestValidLoss["genMse"] = finalGenMseLoss
+                bestValidLoss["epochMse"] = epoch
 
-          finalGenJointLoss = validLoss['genJoint'][0]/validLoss['num']
-          if bestValidLoss["genJoint"] > finalGenJointLoss:
-            net.generator.save(os.path.join(os.path.join(dateFolder, "gen_joint_best"), "generator"))
-            net.discriminator.save(os.path.join(os.path.join(dateFolder, "gen_joint_best"), "discriminator"))
-            #net.modelForTrainOnlyGenWithMSE.save(os.path.join(os.path.join(dateFolder, f"gen_joint_best"), "train_model_generator_only_mse"))
-            #net.modelForTrainOnlyDisc.save(os.path.join(os.path.join(dateFolder, f"gen_joint_best"), "train_model_disc"))
-            #net.modelForTrainOnlyGenWithJoint.save(os.path.join(os.path.join(dateFolder, f"gen_joint_best"), "train_model_generator_joint"))
-            #net.generatorForPredict.save(os.path.join(os.path.join(dateFolder, f"gen_joint_best"), "predict_model_generator"))
-            bestValidLoss["genJoint"] = finalGenJointLoss
-            bestValidLoss["epochJoint"] = epoch
+              finalGenJointLoss = validLoss['genJoint'][0]/validLoss['num']
+              if bestValidLoss["genJoint"] > finalGenJointLoss:
+                net.generator.save(os.path.join(os.path.join(dateFolder, "gen_joint_best"), "generator"))
+                net.discriminator.save(os.path.join(os.path.join(dateFolder, "gen_joint_best"), "discriminator"))
+                bestValidLoss["genJoint"] = finalGenJointLoss
+                bestValidLoss["epochJoint"] = epoch
 
-          f= open(os.path.join(dateFolder, "info.txt"),"w+")
-          f.write(f'Saved best model (according to gen_(join_mse loss): epoch = {bestValidLoss["epochMse"]}\n')
-          f.write(f'Saved best model (according to generator joint loss) : epoch = {bestValidLoss["epochJoint"]}\n')
-          f.close()
+              f= open(os.path.join(dateFolder, "info.txt"),"w+")
+              f.write(f'Saved best model (according to gen_(join_mse loss): epoch = {bestValidLoss["epochMse"]}\n')
+              f.write(f'Saved best model (according to generator joint loss) : epoch = {bestValidLoss["epochJoint"]}\n')
+              f.close()
+
+          elif whatToSave == 'all':
+              net.generator.save(os.path.join(os.path.join(dateFolder, f'epoch_{epoch}'), "generator"))
+              net.discriminator.save(os.path.join(os.path.join(dateFolder, f'epoch_{epoch}'), "discriminator"))
 
           #------------------------------------------------SHOW IMAGES-------------------------------------
           if plotImgsDict["isUsed"]:
@@ -333,7 +330,7 @@ def trainNetwork(net, epochs, batchSize, stepsPerEpoch, ratios, numOfBatchesLoad
               [Image.fromarray(map.astype('uint8')).save(dirPath+f'/{i}_IMG_MAP.jpg') for i, map in enumerate(imgMaps)]
             else:
               generateAndPlotImgs(net, testData, plotImgsDict, numOfBatchesLoadedAtOnce, False)
-              
+
             plt.show()
             time.sleep(plotImgsDict["sleepingTime"])
     return trainLoss, validLoss
@@ -369,42 +366,42 @@ def testNetwork(net, batchSize, stepsForTest, numOfBatchesLoadedAtOnce, plotImgs
 
           actualInfo =""
           testLoss["num"] += 1
-          
+
           retGenMSE = net.modelForTrainOnlyGenWithMSE.test_on_batch(
-                      x = testData.cropped_images[c]/255, 
+                      x = testData.cropped_images[c]/255,
                       y = testData.target_images[c]/255,
                       reset_metrics=True)
           testLoss["genOnlyMSE"] += retGenMSE
           actualInfo += f"Step {t} --- TEST --- mse_loss={testLoss['genOnlyMSE']/testLoss['num']}"
 
           retD = net.modelForTrainOnlyDisc.test_on_batch(
-                      x = [testData.cropped_images[c]/255, testData.csv[c,:,4:], testData.target_images[c]/255], 
+                      x = [testData.cropped_images[c]/255, testData.csv[c,:,4:], testData.target_images[c]/255],
                       y = dummyLabels,
                       sample_weight=None,
                       reset_metrics=True)
-          
+
           testLoss["discAdversarial"] += retD
           actualInfo += "\n"
           actualInfo += f"Step {t}        --- TEST --- disc_adversarial_loss={testLoss['discAdversarial']/testLoss['num']}"
 
           retGJoint = net.modelForTrainOnlyGenWithJoint.test_on_batch(
-                      x = [testData.cropped_images[c]/255, testData.csv[c,:,4:], testData.target_images[c]/255], 
+                      x = [testData.cropped_images[c]/255, testData.csv[c,:,4:], testData.target_images[c]/255],
                       y = [testData.target_images[c]/255, dummyLabels],
                       sample_weight=None,
                       reset_metrics=True)
-          
+
           testLoss["genJoint"][0] += retGJoint[0]
           testLoss["genJoint"][1] += retGJoint[1]
           testLoss["genJoint"][2] += retGJoint[2]
 
           actualInfo += "\n"
           actualInfo += f"                 --- TEST --- gen_joint_loss={testLoss['genJoint'][0]/testLoss['num']}--- gen_mse_loss={testLoss['genJoint'][1]/testLoss['num']} --- gen_adversarial_loss={testLoss['genJoint'][2]/testLoss['num']}"
-          
+
           clear_output()
           print(stdOut + actualInfo)
           t += 1
           c += 1
-      
+
       if plotImgsDict["isUsed"]:
         if plotImgsDict["saveImgsToFile"]:
           imgMaps = generateAndPlotImgs(net, testData, plotImgsDict, numOfBatchesLoadedAtOnce, True)
@@ -422,7 +419,7 @@ def testNetwork(net, batchSize, stepsForTest, numOfBatchesLoadedAtOnce, plotImgs
           [Image.fromarray(map.astype('uint8')).save(dirPath+f'/{i}_IMG_MAP.jpg') for i, map in enumerate(imgMaps)]
         else:
           generateAndPlotImgs(net, testData, plotImgsDict, numOfBatchesLoadedAtOnce, False)
-          
+
 
 
       return testLoss
