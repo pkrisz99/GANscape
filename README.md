@@ -9,7 +9,7 @@
 **Documentation**: [doc](https://github.com/pkrisz99/GANscape/blob/main/Documentation.pdf)
 
 ## Authors
-- Richárd Kovács (@Ricsard13)
+- Richárd Kovács (@Ricsard13, @krichard-git)
 - Mátyás Dulácska (@dulacskamty)
 - Krisztián Peőcz (@pkrisz99)
 
