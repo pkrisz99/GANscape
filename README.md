@@ -1,6 +1,8 @@
 # GANscape
 
-<img src="/images/examples.png" class="center">
+<p align="center">
+  <img src="http://www.fillmurray.com/460/300">
+</p>
 
 **Image inpainting** tool specialised for **landscape** pictures, utilizing the power of **deep learning** and **generative adversarial networks**. Developed for Deep Learning in Practice at **Budapest University of Technology and Economics** in Autumn 2020.
 
@@ -29,7 +31,9 @@
 
 ### The final dataset
 
-<img src="/images/dataset-examples.png" class="center">
+<p align="center">
+  <img src="/images/dataset-examples.png">
+</p>
 
 
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
@@ -82,8 +86,11 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 
 ## Results
 
-<img style="text-align:center;" src="/images/applications.png">
-<p style="text-align:center;"><i>Various use cases for image reconstruction</i></p>
+<p align="center">
+  <img src="/images/applications.png">
+<i>Various use cases for image reconstruction</i>
+</p>
+
 
 The network works well with images, that has a repetitive, blurred, or predictable structure. Close-up wildlife, such as animals or trees can be a problem.
 The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.
