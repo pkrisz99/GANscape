@@ -22,15 +22,14 @@
 
 ### Reducing image dimension to optimize for computation time
 - While the 256x256 image size creates a nice balance between image quality and computational requirements, we moved down to 64x64 to speed up computing on our limited resources.
-- We varied the crop size from 20x20 to 25x25, which means that 10 to 15% of the area of the picure will be cropped.
+- We varied the crop size from 20x20 to 25x25, which means that 10 to 15% of the area of the picure was cropped.
 - Around these crops we define a unifrom 28x28 rectangle. This was important, because one of the network's inputs is the cropped part, and we need an input that has the same dimensions.
 - Both the test and the validation spilt stayed the same.
 - So this left us with 3x203k images, with a total size of 807 megabytes.
 
-### Links for the dataset
+### The final dataset
 
 <img src="/images/dataset-examples.png" class="center">
-<p class="center"><i>Pictures from the dataset</i></p>
 
 
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
@@ -67,6 +66,7 @@ We defined the base network with the following parameters:
 - Batch size: 128
 - Discriminator global average pooling: false
 - Generator bottleneck: 4
+
 Then we deviated from this by changing one parameter. We ran the training for 10 epochs and compared the results on a scale of 1 to 10:
 
 |    Hyperparameter   | Local score | Global score |   Average   |
@@ -82,11 +82,11 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 
 ## Results
 
-<img src="/images/applications.png" class="center">
-<p class="center"><i>Various use cases for image reconstruction</i></p>
+<img style="text-align:center;" src="/images/applications.png">
+<p style="text-align:center;"><i>Various use cases for image reconstruction</i></p>
 
-The network works well with images, that has a repetitive, blurred, or predictable structure. Close-up wildlife, such as animals or trees can be a problem. 
-The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.  
+The network works well with images, that has a repetitive, blurred, or predictable structure. Close-up wildlife, such as animals or trees can be a problem.
+The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.
 In the above image, we show some uses for this network, like removing unwanted people, objects, text, and faults from the images.
 
 
