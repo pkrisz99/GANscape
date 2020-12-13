@@ -1,4 +1,7 @@
 # GANscape
+
+<img src="/images/examples.png" class="center">
+
 **Image inpainting** tool specialised for **landscape** pictures, utilizing the power of **deep learning** and **generative adversarial networks**. Developed for Deep Learning in Practice at **Budapest University of Technology and Economics** in Autumn 2020.
 
 **Documentation**: [doc](https://github.com/pkrisz99/GANscape/blob/main/Documentation.pdf)
@@ -28,7 +31,7 @@
 
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
 
-Link for the data with the 64x64 pictures that have 28x28 cropped parts:
+Link for the data with the 64x64 pictures that have 28x28 cropped parts:  
 https://drive.google.com/file/d/1N9R-XnwEJuN2W6rURWloKTZdHW1UQcku/view?usp=sharing
 
 ### DataLoading class
@@ -42,19 +45,19 @@ In order to make the loading of the pictures straightforward, we made an individ
 - The training of the network consists of three parts. Firstly, we train the generator with MSE loss, then we train the discriminator separately (with both generated and original pictures) using binary crossentropy loss, and finally we train the generator and discriminator together with the discriminator's weights locked and using a joint loss, so that the generator is able to fool the discriminator.
 - Scripts related to handling the network (create, train, test, help functions etc.) are in `network_build_run.ipynb`, and we have ran them on Google Colaboratory.
 
-## Network customization and hyperparameter optimalization
-The network provides many possibilities for customization.
-- generatorDescriber: dict containing the parameters of the generator network
-- discriminatorDescriber: dict containing the parameters of the discriminator network 
-- earlyStopPhases: provides skip conditions if the loss remains too high on phase 2 or phase 3
-- optimizers: optimizer algorithms for the different networks
-- weightForJointLoss: weights of the mse and adversarial loss for the joint loss
-- ratios: how steps are divided between phases
+## Network customization and hyperparameter optimalization  
+The network provides many possibilities for customization.  
+- `generatorDescriber`: dict containing the parameters of the generator network  
+- `discriminatorDescriber`: dict containing the parameters of the discriminator network  
+- `earlyStopPhases`: describes skip conditions if the loss remains too high on phase 2 or phase 3
+- `optimizers`: optimizer algorithms for the different networks
+- `weightForJointLoss`: weights of the mse and adversarial loss for the joint loss
+- `ratios`: how steps are divided between phases  
 These can be found in `network.ipynb`.
 
 
-## Results
-We defined the base network with the following parameters:
+## Hyperparameter optimalization
+We defined the base network with the following parameters:  
 - Phases: 0.33-0.33-0.34
 - MSE:ADV ratio: 1:1
 - Batch size: 128
@@ -74,19 +77,14 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 |    Bottleneck: 3    |     3.67    |     4.33     |     4.00    |
 
 
-### Example picture
-Letting a well configured network train for 6 hours yielded the following result:
-
-![example image](images/example.jpg)
-
 
 ## References
-Original dataset:  
+<b> Original dataset:  </b>
 A 10 million Image Database for Scene Recognition  
 B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba  
 IEEE Transactions on Pattern Analysis and Machine Intelligence, 2017  
 
-Original network implementation:  
+<b> Original network implementation:  </b>
 Globally and Locally Consistent Image Completion  
 P. Sai Vinay  
 https://github.com/V1NAY8/glcic  
