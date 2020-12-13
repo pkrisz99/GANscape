@@ -45,7 +45,7 @@ https://drive.google.com/file/d/1N9R-XnwEJuN2W6rURWloKTZdHW1UQcku/view?usp=shari
 In order to make the loading of the pictures straightforward, we made an individual class for this purpose. The DataRead class stores the required data for the training. You can find further information in the manuals folder.
 
 ## Constructing the network
-- While constructing the network we relied heavily on the article: http://iizuka.cs.tsukuba.ac.jp/projects/completion/data/completion_sig2017.pdf as well as on the implementation based on this article: https://github.com/V1NAY8/glcic
+- While constructing the network we relied heavily on this article: http://iizuka.cs.tsukuba.ac.jp/projects/completion/data/completion_sig2017.pdf as well as on this implementation: https://github.com/V1NAY8/glcic
 - Our network uses a GAN structure as it has a generator and a discriminator part.
 - The generator gets the cropped image and tries to guess the missing part of the picture.
 - The discriminator receives the generated picture and also the part that had to be to generated - in our network this is 64x64 picture and a 28x28 cropped part. With the given inputs the discriminator tries to determine whether the picture was generated (tampered with) or not.
@@ -95,7 +95,7 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 After we selected the advantageous hyperparameters, we let the training run for about 24 hours. 
 The network works well with images that has a repetitive, blurred, or predictable structure.
 Close-up wildlife, such as animals or trees can be a problem.
-The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.
+The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.  
 In the above image, we show some uses for this network, like removing unwanted people, objects, text, and faults from the images.
 
 
