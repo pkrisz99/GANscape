@@ -1,7 +1,7 @@
 # GANscape
 
 <p align="center">
-  <img src="http://www.fillmurray.com/460/300">
+  <img src="images/examples.png">
 </p>
 
 **Image inpainting** tool specialised for **landscape** pictures, utilizing the power of **deep learning** and **generative adversarial networks**. Developed for Deep Learning in Practice at **Budapest University of Technology and Economics** in Autumn 2020.
@@ -87,7 +87,7 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 ## Results
 
 <p align="center">
-  <img src="/images/applications.png">
+  <img src="/images/applications.png"><br>
 <i>Various use cases for image reconstruction</i>
 </p>
 
