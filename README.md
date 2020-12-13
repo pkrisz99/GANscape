@@ -29,9 +29,13 @@
 
 ### Links for the dataset
 
+<img src="/images/dataset-examples.png" class="center">
+<p class="center"><i>Pictures from the dataset</i></p>
+
+
 **Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
 
-Link for the data with the 64x64 pictures that have 28x28 cropped parts:  
+Link for the data (includes the 64x64 images, 64x64 images with cropped parts, and the 28x28 crops):  
 https://drive.google.com/file/d/1N9R-XnwEJuN2W6rURWloKTZdHW1UQcku/view?usp=sharing
 
 ### DataLoading class
@@ -45,18 +49,18 @@ In order to make the loading of the pictures straightforward, we made an individ
 - The training of the network consists of three parts. Firstly, we train the generator with MSE loss, then we train the discriminator separately (with both generated and original pictures) using binary crossentropy loss, and finally we train the generator and discriminator together with the discriminator's weights locked and using a joint loss, so that the generator is able to fool the discriminator.
 - Scripts related to handling the network (create, train, test, help functions etc.) are in `network_build_run.ipynb`, and we have ran them on Google Colaboratory.
 
-## Network customization and hyperparameter optimalization  
+## Network customization
 The network provides many possibilities for customization.  
 - `generatorDescriber`: dict containing the parameters of the generator network  
 - `discriminatorDescriber`: dict containing the parameters of the discriminator network  
 - `earlyStopPhases`: describes skip conditions if the loss remains too high on phase 2 or phase 3
 - `optimizers`: optimizer algorithms for the different networks
 - `weightForJointLoss`: weights of the mse and adversarial loss for the joint loss
-- `ratios`: how steps are divided between phases  
+- `ratios`: how steps are divided between phases
+
 These can be found in `network.ipynb`.
 
-
-## Hyperparameter optimalization
+### Hyperparameter optimalization
 We defined the base network with the following parameters:  
 - Phases: 0.33-0.33-0.34
 - MSE:ADV ratio: 1:1
@@ -76,15 +80,23 @@ Then we deviated from this by changing one parameter. We ran the training for 10
 |   Global avg pool   |     2.67    |     3.33     |     3.00    |
 |    Bottleneck: 3    |     3.67    |     4.33     |     4.00    |
 
+## Results
+
+<img src="/images/applications.png" class="center">
+<p class="center"><i>Various use cases for image reconstruction</i></p>
+
+The network works well with images, that has a repetitive, blurred, or predictable structure. Close-up wildlife, such as animals or trees can be a problem. 
+The network is also able to reconstruct multiple isolated regions, but fails to properly fill linear faults, like scratches.  
+In the above image, we show some uses for this network, like removing unwanted people, objects, text, and faults from the images.
 
 
 ## References
-<b> Original dataset:  </b>
+<b>Original dataset:</b>  
 A 10 million Image Database for Scene Recognition  
 B. Zhou, A. Lapedriza, A. Khosla, A. Oliva, and A. Torralba  
 IEEE Transactions on Pattern Analysis and Machine Intelligence, 2017  
 
-<b> Original network implementation:  </b>
+<b>Original network implementation:</b>  
 Globally and Locally Consistent Image Completion  
 P. Sai Vinay  
 https://github.com/V1NAY8/glcic  
