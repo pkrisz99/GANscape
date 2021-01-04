@@ -6,7 +6,9 @@
 
 **Image inpainting** tool specialised for **landscape** pictures, utilizing the power of **deep learning** and **generative adversarial networks**. Developed for Deep Learning in Practice at **Budapest University of Technology and Economics** in Autumn 2020.
 
-**Documentation**: [doc](https://github.com/pkrisz99/GANscape/blob/main/Documentation.pdf)
+**Documentation**: [doc](https://github.com/pkrisz99/GANscape/blob/main/Documentation.pdf)  
+**Presentation**: [video](https://youtu.be/SQLmqtWNMlQ)
+
 
 ## Authors
 - Richárd Kovács (@Ricsard13, @krichard-git)
