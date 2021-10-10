@@ -38,11 +38,6 @@
 </p>
 
 
-**Disclaimer**: We do not intend to distribute this database, we are only providing these for educational evaluation purposes.
-
-Link for the data (includes the 64x64 images, 64x64 images with cropped parts, and the 28x28 crops):  
-https://drive.google.com/file/d/1N9R-XnwEJuN2W6rURWloKTZdHW1UQcku/view?usp=sharing
-
 ### DataLoading class
 In order to make the loading of the pictures straightforward, we made an individual class for this purpose. The DataRead class stores the required data for the training. You can find further information in the manuals folder.
 
